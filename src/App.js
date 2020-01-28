@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
-import { render } from '@testing-library/react';
 import Person from './Person/Person';
 import './Person/Person.css';
-import person from './Person/Person';
 
 class App extends Component {
   state = {
@@ -16,14 +14,22 @@ class App extends Component {
    showPersons: false
   }
 
-  nameChangedHandler = (event) => {
+  nameChangedHandler = (event , id) => {
+    const personIndex = this.state.persons.findIndex(p => {
+      return p.id === id;
+    });
+
+    const person = {
+      ...this.state.persons[personIndex]
+    };
+
+    person.name = event.target.value;
+
+    const persons = [...this.state.persons];
+    persons[personIndex] = person;
+
     this.setState (
-      { persons : [
-          { name: event.target.value, age: 35 },
-          { name: "Linus", age: 37 },
-          { name: "Marcy", age: 0}
-        ]
-      }
+      { persons : persons }
     )
   }
 
@@ -59,6 +65,7 @@ class App extends Component {
               name={person.name}
               age={person.age}
               key={person.id}
+              changed={(event) => this.nameChangedHandler(event, person.id)}
             />
             })
           }
@@ -71,7 +78,7 @@ class App extends Component {
       <p>this is working.</p>
       <button 
         style={style}
-        onClick={this.togglePersonsHandler}>Switch Name</button>
+        onClick={this.togglePersonsHandler}>Toggle People</button>
       {persons}
     </div>
   );
